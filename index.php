@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palette Customizer - School System</title>
+    <title>Clear Pink Palette Customizer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="mystyle.css">
 </head>
@@ -12,9 +12,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-slate shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">🏫 SchoolSystem</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto fw-medium">
                     <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
@@ -27,49 +24,53 @@
     </nav>
 
     <main class="container my-5 flex-grow-1">
-        
-        <div class="row g-4 justify-content-center align-items-center">
+        <div class="row g-5 justify-content-center align-items-center">
             
             <div class="col-md-6 d-flex flex-column align-items-center">
-                <h3 class="fw-bold text-slate mb-3">Your Custom Case</h3>
                 
-                <div class="compact-case shadow-lg p-4">
-                    <div class="grid-container">
-                        <div class="pan-slot active-target" data-id="1">1</div>
-                        <div class="pan-slot" data-id="2">2</div>
-                        <div class="pan-slot" data-id="3">3</div>
-                        <div class="pan-slot" data-id="4">4</div>
-                        <div class="pan-slot" data-id="5">5</div>
-                        <div class="pan-slot" data-id="6">6</div>
-                        <div class="pan-slot" data-id="7">7</div>
-                        <div class="pan-slot" data-id="8">8</div>
-                        <div class="pan-slot" data-id="9">9</div>
-                    </div>
+                <div id="imagePaletteFrame" class="image-palette-frame configuration-9">
+                    
+                    <div id="interactiveGrid" class="grid-overlay-9">
+                        </div>
                 </div>
-                <p class="text-muted mt-3 small">Targeting: <span id="targetBadge" class="badge bg-primary">Slot 1</span></p>
+                
+                <p class="text-muted mt-3 small">Active Target: <span id="targetBadge" class="badge bg-secondary">Slot 1</span></p>
             </div>
 
             <div class="col-md-5">
                 <div class="card p-4 border-0 shadow-sm bg-white rounded-3">
-                    <h4 class="fw-bold text-slate mb-2">Build Your Look</h4>
-                    <p class="text-secondary small mb-4">Click a circle slot on the left, then choose a pigment color below to inject it.</p>
                     
-                    <h6 class="fw-bold text-slate mb-3">Select Shade Color:</h6>
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="color-dot" style="background-color: #c48c6a;" title="Maca (Caramel)" onclick="applyColor('#c48c6a')"></div>
-                        <div class="color-dot" style="background-color: #5d3266;" title="Galaxy (Purple)" onclick="applyColor('#5d3266')"></div>
-                        <div class="color-dot" style="background-color: #dca7a7;" title="Rose Shimmer" onclick="applyColor('#dca7a7')"></div>
-                        <div class="color-dot" style="background-color: #22252a;" title="Midnight Onyx" onclick="applyColor('#22252a')"></div>
-                        <div class="color-dot" style="background-color: #455a47;" title="Forest Moss" onclick="applyColor('#455a47')"></div>
-                        <div class="color-dot" style="background-color: #e5b869;" title="Golden Glow" onclick="applyColor('#e5b869')"></div>
+                    <h5 class="fw-bold text-slate mb-3">1. Select Configuration</h5>
+                    <div class="d-flex gap-4 mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input custom-radio" type="radio" name="paletteConfig" id="config9" value="9" checked>
+                            <label class="form-check-label fw-medium" for="config9">9 Slots Palette</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input custom-radio" type="radio" name="paletteConfig" id="config4" value="4">
+                            <label class="form-check-label fw-medium" for="config4">4 Slots Palette</label>
+                        </div>
                     </div>
 
-                    <button class="btn btn-dark w-100 mt-5 fw-bold bg-slate border-0 py-2">Save Custom Configuration</button>
+                    <hr class="my-4 text-secondary opacity-25">
+
+                    <h5 class="fw-bold text-slate mb-3">2. Choose Your Shade</h5>
+                    <p class="text-secondary small mb-3">Click on a circular slot inside the product photo, then pick a color shade below:</p>
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="color-dot" style="background-color: #e8b4b8;" title="Blush Pink" onclick="applyColor('#e8b4b8')"></div>
+                        <div class="color-dot" style="background-color: #c48c6a;" title="Maca Caramel" onclick="applyColor('#c48c6a')"></div>
+                        <div class="color-dot" style="background-color: #5d3266;" title="Galaxy Purple" onclick="applyColor('#5d3266')"></div>
+                        <div class="color-dot" style="background-color: #455a47;" title="Forest Green" onclick="applyColor('#455a47')"></div>
+                        <div class="color-dot" style="background-color: #e5b869;" title="Golden Shimmer" onclick="applyColor('#e5b869')"></div>
+                        <div class="color-dot" style="background-color: #d1b3c4;" title="Soft Lavender" onclick="applyColor('#d1b3c4')"></div>
+                    </div>
+
+                    <button class="btn btn-dark w-100 mt-5 fw-bold bg-slate border-0 py-2">Add Custom Palette to Order</button>
                 </div>
             </div>
 
         </div>
-
     </main>
 
     <footer class="bg-dark text-secondary text-center py-3 mt-auto border-top border-secondary border-opacity-25">
@@ -82,25 +83,59 @@
 
     <script>
         let currentActiveSlot = 1;
+        const imagePaletteFrame = document.getElementById('imagePaletteFrame');
+        const interactiveGrid = document.getElementById('interactiveGrid');
+        const targetBadge = document.getElementById('targetBadge');
 
-        // Set up click listeners for the slots
-        document.querySelectorAll('.pan-slot').forEach(slot => {
-            slot.addEventListener('click', function() {
-                document.querySelectorAll('.pan-slot').forEach(s => s.classList.remove('active-target'));
-                this.classList.add('active-target');
-                currentActiveSlot = this.getAttribute('data-id');
-                document.getElementById('targetBadge').innerText = `Slot ${currentActiveSlot}`;
+        function buildInteractiveOverlay(slots) {
+            interactiveGrid.innerHTML = "";
+            currentActiveSlot = 1;
+            targetBadge.innerText = "Slot 1";
+
+            if (slots === 4) {
+                imagePaletteFrame.className = "image-palette-frame configuration-4";
+                interactiveGrid.className = "grid-overlay-4";
+            } else {
+                imagePaletteFrame.className = "image-palette-frame configuration-9";
+                interactiveGrid.className = "grid-overlay-9";
+            }
+
+            for (let i = 1; i <= slots; i++) {
+                const hotspot = document.createElement('div');
+                hotspot.className = "hotspot-slot";
+                if (i === 1) hotspot.classList.add('active-hotspot');
+                hotspot.setAttribute('data-slot', i);
+
+                // When user clicks the slot area over the image
+                hotspot.addEventListener('click', function() {
+                    document.querySelectorAll('.hotspot-slot').forEach(h => h.classList.remove('active-hotspot'));
+                    this.classList.add('active-hotspot');
+                    currentActiveSlot = this.getAttribute('data-slot');
+                    targetBadge.innerText = `Slot ${currentActiveSlot}`;
+                });
+
+                interactiveGrid.appendChild(hotspot);
+            }
+        }
+
+        function applyColor(hexColor) {
+            let activeHotspot = document.querySelector(`.hotspot-slot[data-slot="${currentActiveSlot}"]`);
+            if (activeHotspot) {
+                // Instantly changes the background color inside the circle boundary overlay
+                activeHotspot.style.backgroundColor = hexColor;
+                // Gives the filled color a slight transparency layer so you still see the base pan texture beneath it
+                activeHotspot.style.opacity = "0.85"; 
+            }
+        }
+
+        document.querySelectorAll('input[name="paletteConfig"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                buildInteractiveOverlay(parseInt(this.value));
             });
         });
 
-        // Function to assign background color to active selection
-        function applyColor(hexColor) {
-            let activeTargetEl = document.querySelector(`.pan-slot[data-id="${currentActiveSlot}"]`);
-            if(activeTargetEl) {
-                activeTargetEl.style.backgroundColor = hexColor;
-                activeTargetEl.innerText = ""; // Removes the placeholder number text
-            }
-        }
+        // Initial launch run
+        buildInteractiveOverlay(9);
     </script>
 </body>
 </html>
