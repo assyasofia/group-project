@@ -1,79 +1,77 @@
-/* Color Palette Additions */
+/* Core Styling Variables */
 .bg-slate { background-color: #1e293b !important; }
 .text-slate { color: #1e293b !important; }
 
-/* The Black Compact Outer Frame (Matches your Image) */
-.compact-case {
-    background-color: #0b0c10; /* Solid glossy cosmetic container backing */
-    border-radius: 4px;
-    width: 320px;
-    height: 320px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* The Main Image Stage Container */
+.image-palette-frame {
+    width: 380px;
+    height: 460px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    transition: background-image 0.2s ease-in-out;
 }
 
-/* 3x3 Grid Layout system inside the square container */
-.grid-container {
+/* Swap your actual image files here instead of coding shapes manually */
+.configuration-9 {
+    background-image: url('image/palette9.PNG'); /* Put your 9-slot image path here */
+}
+
+.configuration-4 {
+    background-image: url('image/palette4.PNG'); /* Put your 4-slot image path here */
+}
+
+/* 9-Slot Absolute Grid Mapping System over the image base pans */
+.grid-overlay-9 {
+    position: absolute;
+    /* Adjust these parameters to align the overlay grids cleanly over your image circles */
+    top: 41%; 
+    left: 25%;
+    width: 57%;
+    height: 47%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 15px;
+    grid-gap: 16px;
 }
 
-/* Round Empty Makeup Wells */
-.pan-slot {
-    width: 72px;
-    height: 72px;
+/* 4-Slot Absolute Grid Mapping System over the image base pans */
+.grid-overlay-4 {
+    position: absolute;
+    top: 40%;
+    left: 20%;
+    width: 60%;
+    height: 48%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 24px;
+}
+
+/* The Invisible Interactive Color Windows sitting inside the image wells */
+.hotspot-slot {
     border-radius: 50%;
-    background-color: #ffffff; /* Stark white default wells like your file */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #cbd5e1;
-    font-size: 0.85rem;
-    font-weight: bold;
+    background-color: transparent; /* Invisible initially */
+    border: 3px solid transparent;
     cursor: pointer;
-    transition: transform 0.1s ease-in-out;
-    border: 2px solid transparent;
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
-/* Hover/Focus Active States */
-.pan-slot:hover {
-    transform: scale(1.05);
-}
-.active-target {
-    border: 3px solid #3b82f6 !important; /* Indicates active selection window */
+/* Shows a target ring when selected */
+.active-hotspot {
+    border: 3px solid #3b82f6 !important;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
-/* Color Selection Bubbles */
+/* Color Swatches selection UI dots */
 .color-dot {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.15s;
 }
 .color-dot:hover {
-    transform: scale(1.15);
+    transform: scale(1.12);
 }
-        }
-        // Force track reset target point index range back to 0
-        currentActiveSlotIndex = 0;
-        activeSlotIndicator.innerText = "Slot 1";
-    }
-
-    // 4. Hook up structural configuration choice toggle updates
-    document.querySelectorAll('input[name="config"]').forEach(radioInput => {
-        radioInput.addEventListener('change', (e) => {
-            buildEmptyCaseSlots(parseInt(e.target.value));
-        });
-    });
-
-    // Execute engine execution loops on frame initialization load
-    buildEmptyCaseSlots(9);
-    renderShadePickers();
-</script>
-</body>
-</html>
