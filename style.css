@@ -1,1 +1,79 @@
+/* Color Palette Additions */
+.bg-slate { background-color: #1e293b !important; }
+.text-slate { color: #1e293b !important; }
 
+/* The Black Compact Outer Frame (Matches your Image) */
+.compact-case {
+    background-color: #0b0c10; /* Solid glossy cosmetic container backing */
+    border-radius: 4px;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 3x3 Grid Layout system inside the square container */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+}
+
+/* Round Empty Makeup Wells */
+.pan-slot {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #ffffff; /* Stark white default wells like your file */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+    border: 2px solid transparent;
+}
+
+/* Hover/Focus Active States */
+.pan-slot:hover {
+    transform: scale(1.05);
+}
+.active-target {
+    border: 3px solid #3b82f6 !important; /* Indicates active selection window */
+}
+
+/* Color Selection Bubbles */
+.color-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.15s;
+}
+.color-dot:hover {
+    transform: scale(1.15);
+}
+        }
+        // Force track reset target point index range back to 0
+        currentActiveSlotIndex = 0;
+        activeSlotIndicator.innerText = "Slot 1";
+    }
+
+    // 4. Hook up structural configuration choice toggle updates
+    document.querySelectorAll('input[name="config"]').forEach(radioInput => {
+        radioInput.addEventListener('change', (e) => {
+            buildEmptyCaseSlots(parseInt(e.target.value));
+        });
+    });
+
+    // Execute engine execution loops on frame initialization load
+    buildEmptyCaseSlots(9);
+    renderShadePickers();
+</script>
+</body>
+</html>
