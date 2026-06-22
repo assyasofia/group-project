@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: auth/login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,10 +21,10 @@
             <a class="navbar-brand fw-bold" href="index.html">🏫 SchoolSystem</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto fw-medium">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
-                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin Panel</a></li>
+                   <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                   <li class="nav-item"><a class="nav-link" href="auth/logout.php">Logout</a></li>
+                   <li class="nav-item"><a class="nav-link" href="auth/register.php">Register</a></li>
+                   <li class="nav-item"><a class="nav-link" href="admin.html">Admin Panel</a></li>
                 </ul>
             </div>
         </div>
