@@ -1,7 +1,11 @@
 <?php
+
 session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: auth/login.php");
+
+
+if (isset($_POST['add_to_bag'])) {
+    $_SESSION['selected_config'] = $_POST['paletteConfig'];
+    header("Location: cart.php");
     exit();
 }
 ?>
@@ -10,79 +14,89 @@ if (!isset($_SESSION['username'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clear Pink Palette Customizer</title>
+    <title>Clear Pink Palette Customizer | Pixie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="mystyle.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100 bg-rhode text-rhode-dark">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-slate shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.html">🏫 SchoolSystem</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto fw-medium">
-                   <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-                   <li class="nav-item"><a class="nav-link" href="auth/logout.php">Logout</a></li>
-                   <li class="nav-item"><a class="nav-link" href="auth/register.php">Register</a></li>
-                   <li class="nav-item"><a class="nav-link" href="admin.html">Admin Panel</a></li>
+    <nav class="navbar navbar-expand-lg rhode-nav py-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand rhode-brand m-0" href="home.html">Pixie</a>
+            <div class="collapse navbar-collapse d-none d-lg-block">
+                <ul class="navbar-nav ms-auto rhode-nav-links gap-3">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="index.php">Customizer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.php">Bag</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin Panel</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main class="container my-5 flex-grow-1">
-        <div class="row g-5 justify-content-center align-items-center">
+    <form action="index.php" method="POST" class="container my-5 flex-grow-1">
+        <div class="row g-5 w-100 justify-content-center align-items-center m-0">
             
             <div class="col-md-6 d-flex flex-column align-items-center">
-                
-                <div id="imagePaletteFrame" class="image-palette-frame configuration-9">
-                    
-                    <div id="interactiveGrid" class="grid-overlay-9">
-                        </div>
+                <div id="imagePaletteFrame" class="image-palette-frame configuration-9" style="background-image: url('photos/nineslots.png');">
+                    <div id="interactiveGrid" class="grid-overlay-9"></div>
                 </div>
-                
-                <p class="text-muted mt-3 small">Active Target: <span id="targetBadge" class="badge bg-secondary">Slot 1</span></p>
+                <p class="rhode-target-text mt-4">Active Target: <span id="targetBadge">Slot 1</span></p>
             </div>
 
             <div class="col-md-5">
-                <div class="card p-4 border-0 shadow-sm bg-white rounded-3">
-                    
-                    <h5 class="fw-bold text-slate mb-3">1. Select Configuration</h5>
-                    <div class="d-flex gap-4 mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input custom-radio" type="radio" name="paletteConfig" id="config9" value="9" checked>
-                            <label class="form-check-label fw-medium" for="config9">9 Slots Palette</label>
+                <div class="rhode-card p-4 p-md-5">
+                    <h5 class="rhode-label">01. Select Configuration</h5>
+                    <div class="d-flex gap-3 mb-5">
+                        <div class="rhode-radio-wrapper">
+                            <input type="radio" name="paletteConfig" id="config9" value="9" checked>
+                            <label for="config9">4 Slots Palette</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input custom-radio" type="radio" name="paletteConfig" id="config4" value="4">
-                            <label class="form-check-label fw-medium" for="config4">4 Slots Palette</label>
+                        <div class="rhode-radio-wrapper">
+                            <input type="radio" name="paletteConfig" id="config4" value="4">
+                            <label for="config4">9 Slots Palette</label>
                         </div>
                     </div>
 
-                    <hr class="my-4 text-secondary opacity-25">
-
-                    <h5 class="fw-bold text-slate mb-3">2. Choose Your Shade</h5>
-                    <p class="text-secondary small mb-3">Click on a circular slot inside the product photo, then pick a color shade below:</p>
-                    
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="color-dot" style="background-color: #e8b4b8;" title="Blush Pink" onclick="applyColor('#e8b4b8')"></div>
-                        <div class="color-dot" style="background-color: #c48c6a;" title="Maca Caramel" onclick="applyColor('#c48c6a')"></div>
-                        <div class="color-dot" style="background-color: #5d3266;" title="Galaxy Purple" onclick="applyColor('#5d3266')"></div>
-                        <div class="color-dot" style="background-color: #455a47;" title="Forest Green" onclick="applyColor('#455a47')"></div>
-                        <div class="color-dot" style="background-color: #e5b869;" title="Golden Shimmer" onclick="applyColor('#e5b869')"></div>
-                        <div class="color-dot" style="background-color: #d1b3c4;" title="Soft Lavender" onclick="applyColor('#d1b3c4')"></div>
+                    <h5 class="rhode-label">02. Choose Your Shade</h5>
+                    <p class="rhode-instruction mb-4">Click on a circular slot inside the product photo, then pick a color shade below:</p>
+                    <div class="rhode-shades-grid">
+                        <div class="color-dot" style="background-color: #FFC6FF;" title="Baby Pink" onclick="applyColor('#FFC6FF')"></div>
+                        <div class="color-dot" style="background-color: #FFB3C6;" title="Blush Pink" onclick="applyColor('#FFB3C6')"></div>
+                        <div class="color-dot" style="background-color: #E0A96D;" title="Rose Gold" onclick="applyColor('#E0A96D')"></div>
+                        <div class="color-dot" style="background-color: #D4A5A5;" title="Dusty Rose" onclick="applyColor('#D4A5A5')"></div>
+                        <div class="color-dot" style="background-color: #A37081;" title="Mauve Pink" onclick="applyColor('#A37081')"></div>
+                        <div class="color-dot" style="background-color: #8C3A5C;" title="Berry Sparkle" onclick="applyColor('#8C3A5C')"></div>
+                        <div class="color-dot" style="background-color: #C68B59;" title="Soft Caramel" onclick="applyColor('#C68B59')"></div>
+                        <div class="color-dot" style="background-color: #B85C38;" title="Copper Bronze" onclick="applyColor('#B85C38')"></div>
+                        <div class="color-dot" style="background-color: #4A2E2B;" title="Choco Fudge" onclick="applyColor('#4A2E2B')"></div>
+                        <div class="color-dot" style="background-color: #5C524E;" title="Muted Espresso" onclick="applyColor('#5C524E')"></div>
+                        <div class="color-dot" style="background-color: #FCE22A;" title="Pastel Lemon" onclick="applyColor('#FCE22A')"></div>
+                        <div class="color-dot" style="background-color: #F3E99F;" title="Chiffon Gold" onclick="applyColor('#F3E99F')"></div>
+                        <div class="color-dot" style="background-color: #E9D8A6;" title="Honey Gold" onclick="applyColor('#E9D8A6')"></div>
+                        <div class="color-dot" style="background-color: #FDF6E2;" title="Champagne Gold" onclick="applyColor('#FDF6E2')"></div>
+                        <div class="color-dot" style="background-color: #E2D4F0;" title="Pixie Dust" onclick="applyColor('#E2D4F0')"></div>
+                        <div class="color-dot" style="background-color: #A060A0;" title="Sugar Plum" onclick="applyColor('#A060A0')"></div>
+                        <div class="color-dot" style="background-color: #7851A9;" title="Berry Galaxy" onclick="applyColor('#7851A9')"></div>
+                        <div class="color-dot" style="background-color: #D6A2E8;" title="Lilac Sorbet" onclick="applyColor('#D6A2E8')"></div>
+                        <div class="color-dot" style="background-color: #C39BD3;" title="Starry Night" onclick="applyColor('#C39BD3')"></div>
+                        <div class="color-dot" style="background-color: #8E44AD;" title="Magic Amethyst" onclick="applyColor('#8E44AD')"></div>
                     </div>
 
-                    <button class="btn btn-dark w-100 mt-5 fw-bold bg-slate border-0 py-2">Add Custom Palette to Order</button>
+                    <button type="submit" name="add_to_bag" class="btn btn-rhode-buy w-100 mt-5">add to bag</button>
                 </div>
             </div>
-
         </div>
-    </main>
+    </form>
 
-    <footer class="bg-dark text-secondary text-center py-3 mt-auto border-top border-secondary border-opacity-25">
-        <div class="container">
-            <p class="mb-0 small">&copy; 2026 School System Project. All Rights Reserved.</p>
+    <footer class="rhode-footer py-4 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 pixie cosmetics. all rights reserved.</p>
         </div>
     </footer>
 
@@ -100,9 +114,11 @@ if (!isset($_SESSION['username'])) {
             targetBadge.innerText = "Slot 1";
 
             if (slots === 4) {
+                imagePaletteFrame.style.backgroundImage = "url('photos/fourslots.PNG')";
                 imagePaletteFrame.className = "image-palette-frame configuration-4";
                 interactiveGrid.className = "grid-overlay-4";
             } else {
+                imagePaletteFrame.style.backgroundImage = "url('photos/nineslots.png')";
                 imagePaletteFrame.className = "image-palette-frame configuration-9";
                 interactiveGrid.className = "grid-overlay-9";
             }
@@ -113,8 +129,8 @@ if (!isset($_SESSION['username'])) {
                 if (i === 1) hotspot.classList.add('active-hotspot');
                 hotspot.setAttribute('data-slot', i);
 
-                // When user clicks the slot area over the image
-                hotspot.addEventListener('click', function() {
+                hotspot.addEventListener('click', function(e) {
+                    e.preventDefault(); 
                     document.querySelectorAll('.hotspot-slot').forEach(h => h.classList.remove('active-hotspot'));
                     this.classList.add('active-hotspot');
                     currentActiveSlot = this.getAttribute('data-slot');
@@ -128,10 +144,9 @@ if (!isset($_SESSION['username'])) {
         function applyColor(hexColor) {
             let activeHotspot = document.querySelector(`.hotspot-slot[data-slot="${currentActiveSlot}"]`);
             if (activeHotspot) {
-                // Instantly changes the background color inside the circle boundary overlay
                 activeHotspot.style.backgroundColor = hexColor;
-                // Gives the filled color a slight transparency layer so you still see the base pan texture beneath it
-                activeHotspot.style.opacity = "0.85"; 
+                activeHotspot.style.opacity = "0.85";
+                activeHotspot.style.borderStyle = "solid";
             }
         }
 
@@ -141,13 +156,7 @@ if (!isset($_SESSION['username'])) {
             });
         });
 
-        // Initial launch run
         buildInteractiveOverlay(9);
     </script>
 </body>
 </html>
-    </script>
-</body>
-</html>
-
-
