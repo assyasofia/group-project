@@ -1,0 +1,305 @@
+/* ==========================================================================
+pixie
+========================================================================== */
+body {
+    font-family: 'Jost', sans-serif;
+    background-color: #f2efe9 !important;
+    color: #333232 !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+.rhode-nav {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.rhode-brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 2.3rem;
+    letter-spacing: -0.04em;
+    color: #333232 !important;
+    text-transform: lowercase;
+}
+
+.rhode-nav-links .nav-link {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #72706e !important;
+    font-weight: 400;
+    padding: 0 15px !important;
+}
+
+.rhode-nav-links .nav-link:hover,
+.rhode-nav-links .nav-link.active {
+    color: #333232 !important;
+}
+
+.rhode-card {
+    background-color: #ffffff;
+    border-radius: 32px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.015) !important;
+}
+
+.rhode-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    color: #333232;
+    margin-bottom: 12px;
+}
+
+.rhode-instruction {
+    font-size: 0.85rem;
+    color: #72706e;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.rhode-radio-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.rhode-radio-wrapper input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.rhode-radio-wrapper label {
+    display: block;
+    text-align: center;
+    padding: 14px 24px;
+    background-color: #dedcd9;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #52504e;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rhode-radio-wrapper input[type="radio"]:checked + label {
+    background-color: #333232;
+    color: #ffffff;
+    border-color: #333232;
+}
+
+.rhode-shades-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.color-dot {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 0 0 3px #ffffff;
+    transition: transform 0.2s ease;
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+}
+
+.rhode-target-text {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: #72706e;
+}
+
+#targetBadge {
+    font-weight: 500;
+    color: #333232;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.btn-rhode-buy {
+    background-color: #333232;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 100px;
+    padding: 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s ease;
+}
+
+.btn-rhode-buy:hover {
+    opacity: 0.9;
+    color: #ffffff !important;
+}
+
+.rhode-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    font-size: 0.7rem;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    color: #8c8a87;
+}
+
+/* ==========================================================================
+ GRID & FRAME 4 & 9 SLOTS
+========================================================================== */
+.image-palette-frame {
+    width: 380px;
+    height: 460px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    transition: background-image 0.2s ease-in-out;
+}
+
+.configuration-9 {
+    background-image: url('photos/nineslots.png');
+}
+
+.configuration-4 {
+    background-image: url('photos/fourslots.PNG');
+}
+
+.grid-overlay-9 {
+    position: absolute;
+    top: 39%;
+    left: 22%;
+    width: 56%;
+    height: 40%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.grid-overlay-9 .hotspot-slot {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1 !important;
+    max-width: 65px;
+    margin: auto;
+}
+
+.grid-overlay-4 {
+    position: absolute;
+    top: 41%;
+    left: 23%;
+    width: 55%;
+    height: 44%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+.hotspot-slot {
+    width: 90px;
+    height: 90px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hotspot-slot:hover {
+    border-color: #1e293b;
+    transform: scale(1.05);
+}
+
+.active-hotspot {
+    border: 3px solid #0d6efd !important;
+    box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+}
+
+/* ==========================================================================
+ HOME
+========================================================================== */
+.hero-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 2.8rem;
+    letter-spacing: -0.03em;
+    color: #333232;
+    line-height: 1.1;
+}
+
+.hero-banner-frame {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+    object-fit: cover;
+}
+
+.ribbon-gift {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background-color: #333232;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling Ikon */
+.cart-icon-wrapper { position: relative; }
+.cart-badge {
+    position: absolute; top: -5px; right: -8px;
+    background-color: #ff0000; color: white;
+    font-size: 10px; font-weight: bold;
+    padding: 2px 6px; border-radius: 50%;
+}
+.dropdown-menu { border-radius: 15px; padding: 10px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+<style>
+.cart-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #ff3b30; /* Warna merah TikTok */
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1;
+}
+</style>
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
