@@ -8,7 +8,6 @@ if (session_status() === PHP_SESSION_NONE) {
 // ==================================================================
 // Jika user belum melakukan login ATAU peranan sesi bukan 'admin', sekat akses[cite: 2, 4]
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
-    // Hantar penceroboh balik ke halaman utama pelanggan biasa (home.php)
     header("Location: home.php");
     exit();
 }
