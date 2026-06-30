@@ -6,6 +6,57 @@ if (isset($_SESSION['user'])) { $user = $_SESSION['user']; }
 elseif (isset($_SESSION['username'])) { $user = $_SESSION['username']; } 
 else { header("Location: login.php"); exit(); }
 
+// Checkout Process Logic
+// ==================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_items'])) {
+    $selected_items = $_POST['selected_items'];
+
+    if (is_array($selected_items) && count($selected_items) > 0) {
+        $success_count = 0;
+
+        foreach ($selected_items as $cart_id) {
+            $cart_id = mysqli_real_escape_string($conn, $cart_id);
+
+            $cart_query = "SELECT * FROM cart WHERE id = '$cart_id' AND user_id = '$user'";
+            $cart_result = mysqli_query($conn, $cart_query);
+
+            if ($cart_result && mysqli_num_rows($cart_result) > 0) {
+                $cart_row = mysqli_fetch_assoc($cart_result);
+                $config = $cart_row['config_type'];
+                $shades = $cart_row['shades_data'];
+                $shades_array = json_decode($shades, true);
+
+                $stmt_order = $conn->prepare("INSERT INTO orders (user_id, palette_type) VALUES (?, ?)");
+                $stmt_order->bind_param("ss", $user, $config);
+                $stmt_order->execute();
+                $new_order_id = $conn->insert_id; // Ambil ID order yang dijana
+                $stmt_order->close();
+
+                if (is_array($shades_array)) {
+                    $stmt_selection = $conn->prepare("INSERT INTO palette_selection (order_id, slot_number, hex_color_code) VALUES (?, ?, ?)");
+                    foreach ($shades_array as $index => $hex_code) {
+                        $slot_number = $index + 1;
+                        if (!empty($hex_code)) {
+                            $stmt_selection->bind_param("iis", $new_order_id, $slot_number, $hex_code);
+                            $stmt_selection->execute();
+                        }
+                    }
+                    $stmt_selection->close();
+                }
+
+                mysqli_query($conn, "DELETE FROM cart WHERE id = '$cart_id'");
+                $success_count++;
+            }
+        }
+
+        if ($success_count > 0) {
+            echo "<script>localStorage.removeItem('cartCheckedItems'); window.location.href='thankyou.php';</script>";
+            exit();
+        }
+    }
+}
+// ==================================================================
+
 $is_first_time = true; 
 $res = $conn->query("SELECT COUNT(*) as total FROM orders WHERE user_id = '$user'");
 if ($res && $res->fetch_assoc()['total'] > 0) { $is_first_time = false; }
@@ -43,7 +94,7 @@ function calculatePrice($config_type) { return ($config_type == 4) ? 80.00 : 180
 <?php include("header.php"); ?>
 
 <div class="container my-5 flex-grow-1 d-flex flex-column justify-content-start">
-    <form id="checkoutForm" action="thankyou.php" method="POST"></form>
+    <form id="checkoutForm" action="cart.php" method="POST"></form>
     <div class="row g-4 justify-content-center m-0 w-100">
         <div class="col-lg-8 p-0">
             <h3 class="mb-4" style="font-family: 'Fraunces', serif;">Your Shopping Bag</h3>
@@ -92,7 +143,7 @@ function calculatePrice($config_type) { return ($config_type == 4) ? 80.00 : 180
                 <h5>Order Summary</h5>
                 <div class="d-flex justify-content-between mb-2"><span>Selected Items</span><span id="selectedCount">0</span></div>
                 
-                <div id="discountContainer" class="d-flex justify-content-between mb-2 text-danger" style="display: none !important;">
+                <div id="discountContainer" class="d-flex justify-content-between mb-2 text-danger" style="display: none;">
                     <span>20% OFF</span><span>-RM <span id="discountDisplay">0.00</span></span>
                 </div>
                 
