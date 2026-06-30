@@ -1,39 +1,26 @@
 <?php
 ob_start(); 
 session_start();
-
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pixie_db"; 
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
+include("db_connect.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isset($_POST['buy_now']))) {
-    
+
+	if (!isset($_SESSION['user'])) {
+        header("Location: login.php");
+        exit();
+    }
+	
     $user = $_SESSION['user']; 
     $config = isset($_POST['paletteConfig']) ? $_POST['paletteConfig'] : '9'; 
     $shades = isset($_POST['shades_hidden']) ? $_POST['shades_hidden'] : '[]';
 
    
     $stmt = $conn->prepare("INSERT INTO cart (user_id, config_type, shades_data) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $user, $config, $shades);
+    $stmt->bind_param("sss", $user, $config, $shades);
     $stmt->execute();
     $stmt->close();
 
-    
-    if (isset($_POST['buy_now'])) {
-        
+    if (isset($_POST['buy_now'])) {  
         echo "<script>window.location.href='cart.php';</script>";
         exit();
     } else {
@@ -62,6 +49,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
         background-color: #fbf5f6 !important; 
     }
     </style>
+
+	<script>
+        const isLoggedIn = <?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>;
+        
+        function handleAddToCart(event) {
+            if (!isLoggedIn) {
+                // 1. Sekat form daripada menghantar data ke PHP backend
+                event.preventDefault();
+                
+                // 2. Paparkan amaran alert
+                alert("Please log in first to save your custom palette to your bag!");
+                
+                // 3. Alihkan pelanggan terus ke halaman login.php
+                window.location.href = "login.php";
+                return false;
+            }
+            return true; 
+        }
+    </script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-rhode text-rhode-dark">
 
