@@ -1,16 +1,22 @@
 /* ==========================================================================
-pixie
+   PIXIE BASE
 ========================================================================== */
+
 body {
     font-family: 'Jost', sans-serif;
-    background-color: #f2efe9 !important;
-    color: #333232 !important;
+    background-color: #f2efe9;
+    color: #333232;
     -webkit-font-smoothing: antialiased;
 }
 
+
+/* ==========================================================================
+   NAVBAR
+========================================================================== */
+
 .rhode-nav {
     background-color: transparent;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0,0,0,.06);
 }
 
 .rhode-brand {
@@ -18,142 +24,205 @@ body {
     font-weight: 300;
     font-size: 2.3rem;
     letter-spacing: -0.04em;
-    color: #333232 !important;
+    color:#333232;
     text-transform: lowercase;
 }
 
+
 .rhode-nav-links .nav-link {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #72706e !important;
-    font-weight: 400;
-    padding: 0 15px !important;
+
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#72706e;
+    font-weight:400;
+    padding:0 15px;
 }
+
 
 .rhode-nav-links .nav-link:hover,
 .rhode-nav-links .nav-link.active {
-    color: #333232 !important;
+
+    color:#333232;
 }
 
-.rhode-card {
-    background-color: #ffffff;
-    border-radius: 32px;
-    border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.015) !important;
-}
 
-.rhode-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 600;
-    color: #333232;
-    margin-bottom: 12px;
-}
-
-.rhode-instruction {
-    font-size: 0.85rem;
-    color: #72706e;
-    line-height: 1.6;
-    font-weight: 300;
-}
-
-.rhode-radio-wrapper {
-    position: relative;
-    flex: 1;
-}
-
-.rhode-radio-wrapper input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.rhode-radio-wrapper label {
-    display: block;
-    text-align: center;
-    padding: 14px 24px;
-    background-color: #dedcd9;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: #52504e;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.rhode-radio-wrapper input[type="radio"]:checked + label {
-    background-color: #333232;
-    color: #ffffff;
-    border-color: #333232;
-}
-
-.rhode-shades-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-}
-
-.color-dot {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: inset 0 0 0 3px #ffffff;
-    transition: transform 0.2s ease;
-}
-
-.color-dot:hover {
-    transform: scale(1.1);
-}
-
-.rhode-target-text {
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    color: #72706e;
-}
-
-#targetBadge {
-    font-weight: 500;
-    color: #333232;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-}
-
-.btn-rhode-buy {
-    background-color: #333232;
-    color: #ffffff !important;
-    border: none;
-    border-radius: 100px;
-    padding: 16px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    letter-spacing: 0.02em;
-    transition: opacity 0.2s ease;
-}
-
-.btn-rhode-buy:hover {
-    opacity: 0.9;
-    color: #ffffff !important;
-}
-
-.rhode-footer {
-    background-color: transparent;
-    border-top: 1px solid rgba(0, 0, 0, 0.04);
-    font-size: 0.7rem;
-    text-transform: lowercase;
-    letter-spacing: 0.05em;
-    color: #8c8a87;
-}
 
 /* ==========================================================================
- GRID & FRAME 4 & 9 SLOTS
+   CARDS
 ========================================================================== */
+
+
+.rhode-card {
+
+    background:#fff;
+    border-radius:32px;
+    border:none;
+    box-shadow:0 10px 40px rgba(0,0,0,.015);
+}
+
+
+.rhode-label {
+
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-weight:600;
+    color:#333232;
+    margin-bottom:12px;
+}
+
+
+.rhode-instruction {
+
+    font-size:.85rem;
+    color:#72706e;
+    line-height:1.6;
+    font-weight:300;
+
+}
+
+
+/* ==========================================================================
+ RADIO
+========================================================================== */
+
+
+.rhode-radio-wrapper {
+
+    position:relative;
+    flex:1;
+
+}
+
+
+.rhode-radio-wrapper input {
+
+    position:absolute;
+    opacity:0;
+
+}
+
+
+.rhode-radio-wrapper label {
+
+    display:block;
+    text-align:center;
+    padding:14px 24px;
+    background:#dedcd9;
+    border-radius:100px;
+    font-size:.85rem;
+    color:#52504e;
+    cursor:pointer;
+    transition:.2s ease;
+
+}
+
+
+.rhode-radio-wrapper input:checked + label {
+
+    background:#333232;
+    color:white;
+
+}
+
+
+
+/* ==========================================================================
+ COLOR PALETTE
+========================================================================== */
+
+
+.rhode-shades-grid {
+
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+
+}
+
+
+.color-dot {
+
+    width:100%;
+    aspect-ratio:1;
+    border-radius:50%;
+    cursor:pointer;
+    border:1px solid rgba(0,0,0,.08);
+    box-shadow:inset 0 0 0 3px white;
+    transition:.2s ease;
+
+}
+
+
+.color-dot:hover {
+
+    transform:scale(1.1);
+
+}
+
+
+
+/* ==========================================================================
+ BUTTON
+========================================================================== */
+
+
+.btn-rhode-buy {
+
+    background:#333232;
+    color:white;
+    border:none;
+    border-radius:100px;
+    padding:16px;
+    font-size:.9rem;
+    text-transform:lowercase;
+    transition:.2s ease;
+
+}
+
+
+.btn-rhode-buy:hover {
+
+    opacity:.9;
+    color:white;
+
+}
+
+
+
+/* ==========================================================================
+ IMAGE FRAME
+========================================================================== */
+
+
+.image-palette-frame {
+
+    width:380px;
+    height:460px;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+    position:relative;
+
+}
+
+
+.configuration-9 {
+
+    background-image:url("photos/nineslots.png");
+
+}
+
+
+.configuration-4 {
+
+    background-image:url("photos/fourslots.PNG");
+
+}
+
+
+
 .image-palette-frame {
     width: 380px;
     height: 460px;
@@ -224,51 +293,454 @@ body {
     box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
 }
 
+
+
+
 /* ==========================================================================
- HOME
+ HOME HERO
 ========================================================================== */
+
+/* ======================================================
+   PIXIE PREMIUM HOME (PART 2A)
+====================================================== */
+
+body{
+    font-family:'Jost',sans-serif;
+    background:#f7efec;
+    color:#343434;
+    overflow-x:hidden;
+}
+
+
+/* ---------- Navbar ---------- */
+
+.navbar{
+
+    background:rgba(255,255,255,.85)!important;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(0,0,0,.05);
+
+    transition:.3s;
+
+    z-index:999;
+
+}
+
+
+.rhode-brand{
+
+    font-family:'Fraunces',serif;
+
+    font-size:2.4rem;
+
+    font-weight:300;
+
+    color:#3b3737!important;
+
+    letter-spacing:-1px;
+
+}
+
+
+
+.rhode-nav-links .nav-link{
+
+    font-size:.78rem;
+
+    font-weight:500;
+
+    letter-spacing:2px;
+
+    color:#666!important;
+
+    transition:.3s;
+
+}
+
+
+.rhode-nav-links .nav-link:hover{
+
+    color:#b7748a!important;
+
+}
+
+
+
+/* ---------- Announcement ---------- */
+
+.top-banner{
+
+    background:#fcf6f4;
+
+    border-bottom:1px solid rgba(0,0,0,.05);
+
+    
+    font-size:.7rem; 
+
+    letter-spacing:.5px;
+
+    padding:10px 0;
+
+}
+
+/* ---------- Hero ---------- */
+/
+.hero-circle {
+    display: none !important; 
+}
+
+
+/* ---------- Hero ---------- */
+
+
+/* ---------- Hero Layout Structure ---------- */
+.hero-section {
+    position: relative;
+    min-height: 760px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    
+    
+    background-image: url('photos/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+
+.hero-section::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:650px;
+
+    height:650px;
+
+    background:#f5dfe0;
+
+    border-radius:50%;
+
+    top:-220px;
+
+    left:-180px;
+
+    opacity:.100;
+
+   
+
+}
+
+
+
+.hero-section::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:500px;
+
+    height:500px;
+
+    background:#edd4d8;
+
+    border-radius:50%;
+
+    bottom:-250px;
+
+    right:-180px;
+
+    opacity:.100;
+
+   
+
+}
+
+
+
+/* ---------- Hero Text ---------- */
+
+
+.hero-subtitle {
+    display: inline-block;
+    background: #e2b3bc; 
+    color: #4a2831;     
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+}
+
 .hero-title {
     font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: 2.8rem;
-    letter-spacing: -0.03em;
-    color: #333232;
-    line-height: 1.1;
+    font-size: 4.8rem;
+    line-height: 1.05;
+    font-weight: 400;   
+    color: #3d262a;     
 }
 
-.hero-banner-frame {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
-    background-color: #ffffff;
-    padding: 10px;
+.hero-title span {
+    color: #6d3f4b;     
 }
 
-.hero-image {
-    width: 100%;
-    height: auto;
-    border-radius: 16px;
-    display: block;
-    object-fit: cover;
+.hero-description {
+    margin-top: 28px;
+    font-size: 1rem;
+    line-height: 1.9;
+    color: #443c3d;    
+    max-width: 520px;
+    font-weight: 400;   
 }
 
-.ribbon-gift {
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background-color: #333232;
-    color: #ffffff;
-    padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+
+/* ---------- Rating ---------- */
+
+
+.hero-rating{
+
+    margin-top:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    color:#555;
+
+    font-size:.95rem;
+
 }
 
+
+.hero-rating i{
+
+    color:#f7b731;
+
+}
+
+
+
+/* ---------- Button ---------- */
+
+
+.btn-hero{
+
+    margin-top:35px;
+
+    background:#bb7688;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:999px;
+
+    padding:17px 42px;
+
+    font-size:.95rem;
+
+    letter-spacing:1px;
+
+    transition:.35s;
+
+    box-shadow:0 12px 30px rgba(187,118,136,.28);
+
+}
+
+
+
+.btn-hero:hover{
+
+    background:#a96577;
+
+    transform:translateY(-3px);
+
+    color:#fff;
+
+}
+
+
+
+/* ---------- Product Image ---------- */
+
+
+.hero-image-wrapper{
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+
+.hero-circle{
+
+    position:absolute;
+
+    width:520px;
+
+    height:520px;
+
+    background:#fff;
+
+    border-radius:50%;
+
+    box-shadow:0 35px 90px rgba(0,0,0,.08);
+
+}
+
+
+
+.hero-product{
+
+    position:relative;
+
+    width:520px;
+
+    max-width:100%;
+
+    z-index:2;
+
+    filter:drop-shadow(0 30px 40px rgba(0,0,0,.15));
+
+    animation:floatPalette 5s ease-in-out infinite;
+
+}
+
+
+
+@keyframes floatPalette{
+
+    50%{
+
+        transform:translateY(-15px);
+
+    }
+
+}
+
+
+
+/* ---------- Sparkles ---------- */
+
+
+.sparkle{
+
+    position:absolute;
+
+    color:#d8a8b6;
+
+    opacity:.5;
+
+    animation:twinkle 3s infinite;
+
+}
+
+
+.sparkle.one{
+
+    top:18%;
+
+    left:54%;
+
+    font-size:22px;
+
+}
+
+
+.sparkle.two{
+
+    right:8%;
+
+    top:28%;
+
+    font-size:16px;
+
+}
+
+
+.sparkle.three{
+
+    bottom:18%;
+
+    left:62%;
+
+    font-size:18px;
+
+}
+
+
+@keyframes twinkle{
+
+    50%{
+
+        transform:scale(1.3);
+
+        opacity:1;
+
+    }
+
+}
+/* ==========================================================================
+ MOBILE
+========================================================================== */
+
+
+@media(max-width:768px){
+
+
+.hero {
+
+    min-height:650px;
+
+}
+
+
+.hero h1 {
+
+    font-size:50px;
+
+}
+
+
+.hero p {
+
+    font-size:16px;
+
+}
+
+
+.palette {
+
+    width:300px;
+
+}
+
+
+.image-palette-frame {
+
+    width:300px;
+    height:380px;
+
+}
+
+
+}
 /* Styling Ikon */
 .cart-icon-wrapper { position: relative; }
 .cart-badge {
@@ -288,7 +760,7 @@ body {
     position: absolute;
     top: -5px;
     right: -10px;
-    background-color: #ff3b30; /* Warna merah TikTok */
+    background-color: #ff3b30; 
     color: white;
     border-radius: 50%;
     padding: 2px 6px;
