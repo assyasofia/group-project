@@ -1,41 +1,39 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { 
-    session_start(); 
+include('db_connect.php');
+session_start();
+
+$search_value = "";
+$filter_value = "";
+
+
+if (isset($_GET['search'])) {
+    $search_value = $_GET['search'];
+}
+if (isset($_GET['filter_slots'])) {
+    $filter_value = $_GET['filter_slots'];
 }
 
-// ==================================================================
-// BACK-END PROTECTION: Stop access to admin,php if user is not staff
-// ==================================================================
-// Jika user belum melakukan login ATAU peranan sesi bukan 'admin', sekat akses[cite: 2, 4]
-if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
-    // Hantar penceroboh balik ke halaman utama pelanggan biasa (home.php)
-    header("Location: home.php");
-    exit();
-}
-// ==================================================================
 
-include("db_connect.php");
-
-// ==================================================================
-// FIX: INITIALIZE & DEFINE SEARCH, FILTER, AND RESULT VARIABLES
-// ==================================================================
-$search_value = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
-$filter_value = isset($_GET['filter_slots']) ? mysqli_real_escape_string($conn, $_GET['filter_slots']) : '';
-
-// Build base SQL query (Modify table/column names if yours differ in the DB)
-$query = "SELECT * FROM orders WHERE 1=1";
+$sql = "SELECT orders.order_id, users.username, orders.palette_type 
+        FROM orders 
+        JOIN users ON orders.user_id = users.user_id WHERE 1=1";
 
 if (!empty($search_value)) {
-    $query .= " AND (user_id LIKE '%$search_value%' OR order_id LIKE '%$search_value%')";
+    $sql .= " AND (users.username LIKE '%$search_value%' OR orders.order_id LIKE '%$search_value%')";
 }
 
 if (!empty($filter_value)) {
-    $query .= " AND palette_type = '$filter_value'";
+    $sql .= " AND orders.palette_type = '$filter_value'";
 }
 
-$query .= " ORDER BY order_id DESC";
-$result = mysqli_query($conn, $query);
-// ==================================================================
+$sql .= " ORDER BY orders.order_id DESC";
+
+
+try {
+    $result = mysqli_query($conn, $sql);
+} catch (Exception $e) {
+    $result = false;
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,69 +49,25 @@ $result = mysqli_query($conn, $query);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
-    <style>
-        .admin-table {
-            font-family: 'Jost', sans-serif;
-            background-color: transparent !important;
-        }
-        .admin-table th {
-            font-family: 'Jost', sans-serif;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-            border-bottom: 2px solid #e5dada !important;
-            color: #4A3E3D !important;
-            padding: 15px;
-        }
-        .admin-table td {
-            padding: 18px 15px;
-            border-bottom: 1px solid #eee2e2 !important;
-            color: #5C524E;
-        }
-        .color-preview-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border-radius: 30px;
-            margin-right: 4px;
-            border: 1px solid rgba(0,0,0,0.06);
-            font-family: 'Jost', sans-serif;
-        }
-        .btn-rhode-delete {
-            font-family: 'Jost', sans-serif;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            border: 1px solid #d4a5a5;
-            color: #a37081;
-            background: transparent;
-            transition: all 0.2s ease;
-        }
-        .btn-rhode-delete:hover {
-            background-color: #8c3a5c;
-            color: #ffffff;
-            border-color: #8c3a5c;
-        }
-        .rhode-input {
-            background-color: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            color: #4A2E2B !important;
-            font-family: 'Jost', sans-serif;
-            border-radius: 0 !important;
-        }
-        .rhode-input:focus {
-            background-color: #ffffff;
-            border-color: #A37081 !important;
-            box-shadow: none !important;
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-rhode text-rhode-dark">
 
-    <?php include("header.php"); ?>
-    
+    <nav class="navbar navbar-expand-lg rhode-nav py-4">
+        <div class="container position-relative d-flex justify-content-between align-items-center">
+            <a class="navbar-brand rhode-brand m-0" href="index.html">Pixie</a>
+            <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
+                <ul class="navbar-nav ms-auto rhode-nav-links gap-3 align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="home.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php">Customizer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.php">Bag</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="admin.php">Admin Panel</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <main class="container my-5 flex-grow-1">
         
         <div class="d-flex justify-content-between align-items-end mb-5">
@@ -179,7 +133,7 @@ $result = mysqli_query($conn, $query);
                         ?>
                         <tr>
                             <td class="ps-4 fw-medium text-dark">#PX-<?php echo $row['order_id']; ?></td>
-                            <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                            <td><?php echo htmlspecialchars($row['username']); ?></td>
                             <td style="font-style: italic; font-family: 'Fraunces', serif; font-size: 0.95rem;">
                                 <?php echo $row['palette_type']; ?> Custom Slots
                             </td>
