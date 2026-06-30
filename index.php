@@ -1,70 +1,93 @@
 <?php
-ob_start(); 
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+include("db_connect.php");
 
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
-}
+if (isset($_SESSION['user'])) { $user = $_SESSION['user']; } 
+elseif (isset($_SESSION['username'])) { $user = $_SESSION['username']; } 
+else { header("Location: login.php"); exit(); }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pixie_db"; 
+$is_first_time = true; 
+$res = $conn->query("SELECT COUNT(*) as total FROM orders WHERE user_id = '$user'");
+if ($res && $res->fetch_assoc()['total'] > 0) { $is_first_time = false; }
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$query = "SELECT * FROM cart WHERE user_id = ? ORDER BY id DESC";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("s", $user);
+$stmt->execute();
+$cart_items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isset($_POST['buy_now']))) {
-    
-    $user = $_SESSION['user']; 
-    $config = isset($_POST['paletteConfig']) ? $_POST['paletteConfig'] : '9'; 
-    $shades = isset($_POST['shades_hidden']) ? $_POST['shades_hidden'] : '[]';
-
-   
-    $stmt = $conn->prepare("INSERT INTO cart (user_id, config_type, shades_data) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $user, $config, $shades);
-    $stmt->execute();
-    $stmt->close();
-
-    
-    if (isset($_POST['buy_now'])) {
-        
-        echo "<script>window.location.href='cart.php';</script>";
-        exit();
-    } else {
-        echo "<script>alert('Successfully added to your bag!'); window.location.href='index.php';</script>";
-        exit();
-    }
-}
+function calculatePrice($config_type) { return ($config_type == 4) ? 80.00 : 180.00; }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clear Pink Palette Customizer | Pixie</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Your Shopping Bag | Pixie</title>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        .active-hotspot {
-            border: 2px solid #a37081 !important;
-            box-shadow: 0 0 10px rgba(163, 112, 129, 0.6);
-        }
-		body {
+<style>
+    .mini-palette-preview {
+        width: 120px;
+        aspect-ratio: 1 / 1;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .mini-dot {
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transform: translate(-50%, -50%);
+    }
+
+    /* Saiz untuk 4-slot */
+    .slot4-1, .slot4-2, .slot4-3, .slot4-4 {
+        width: 18%;
+        height: 18%;
+    }
+
+    /* Saiz untuk 9-slot */
+    .slot9-1, .slot9-2, .slot9-3,
+    .slot9-4, .slot9-5, .slot9-6,
+    .slot9-7, .slot9-8, .slot9-9 {
+        width: 13%;
+        height: 13%;
+    }
+
+    .cart-checkbox {
+        width: 20px;
+        height: 20px;
+        accent-color: #a37081;
+        cursor: pointer;
+    }
+
+    .slot4-1 { top: 52%; left: 39%; }
+    .slot4-2 { top: 52%; left: 61.34%; }
+    .slot4-3 { top: 74%; left: 39%; }
+    .slot4-4 { top: 74%; left: 61.34%; }
+
+    .slot9-1 { top: 47.5%; left: 35.5%; }
+    .slot9-2 { top: 47.5%; left: 50%; }
+    .slot9-3 { top: 47.5%; left: 65%; }
+    .slot9-4 { top: 62.5%; left: 35.5%; }
+    .slot9-5 { top: 62.5%; left: 50%; }
+    .slot9-6 { top: 62.5%; left: 65%; }
+    .slot9-7 { top: 77%; left: 35.5%; }
+    .slot9-8 { top: 77%; left: 50%; }
+    .slot9-9 { top: 77%; left: 65%; }
+	
+	body {
         background-color: #fbf5f6 !important; 
     }
-    </style>
+</style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-rhode text-rhode-dark">
-
 <div class="top-banner text-center">
 
     🚚 Free Shipping on orders above RM100
@@ -75,222 +98,122 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
     <strong>PIXIE20</strong>
 
 </div>
-
 <?php include("header.php"); ?>
 
-    <form action="index.php" method="POST" id="customizerForm" class="container my-5 flex-grow-1">
-        <input type="hidden" name="shades_hidden" id="shadesHiddenInput" value="[]">
-
-        <div class="row g-5 w-100 justify-content-center align-items-center m-0">
+<div class="container my-5 flex-grow-1 d-flex flex-column justify-content-start">
+    <form id="checkoutForm" action="thankyou.php" method="POST"></form>
+    <div class="row g-4 justify-content-center m-0 w-100">
+        <div class="col-lg-8 p-0">
+            <h3 class="mb-4" style="font-family: 'Fraunces', serif;">Your Shopping Bag</h3>
             
-            <div class="col-md-6 d-flex flex-column align-items-center">
-                <div id="imagePaletteFrame" class="image-palette-frame configuration-9" style="background-image: url('photos/nineslots.png');">
-                    <div id="interactiveGrid" class="grid-overlay-9"></div>
+            <?php if (empty($cart_items)): ?>
+                <div class="text-center my-5 py-5">
+                    <h4 style="font-family: 'Fraunces', serif;">Your Cart is Empty</h4>
+                    <p>Looks like you haven't added anything yet.</p>
+                    <a href="index.php" class="btn btn-dark mt-3">Go Customize Your Palette</a>
                 </div>
-                
-                <div id="deleteActionArea" class="mt-4 text-center" style="display: none; min-height: 40px;">
-                    <button type="button" id="btnDeleteColor" class="btn btn-outline-danger btn-sm px-4 rounded-pill">
-                        Remove Color from Slot <span id="deleteSlotNumber">1</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="rhode-card p-4 p-md-5">
-                    <h5 class="rhode-label">01. Select Configuration</h5>
-                    <div class="d-flex gap-3 mb-5">
-                        <div class="rhode-radio-wrapper">
-                            <input type="radio" name="paletteConfig" id="config9" value="9" checked>
-                            <label for="config9">9 Slots Palette</label>
+            <?php else: ?>
+                <?php foreach ($cart_items as $item): 
+                    $price = calculatePrice($item['config_type']);
+                    $qty = $item['quantity'] ?? 1;
+                    $total_item_price = $price * $qty;
+                    $shades = json_decode($item['shades_data'], true);
+                    $bgImage = ($item['config_type'] == 4) ? 'photos/fourslots.PNG' : 'photos/nineslots.png';
+                ?>
+                <div class="rhode-card mb-3 p-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <input type="checkbox" name="selected_items[]" form="checkoutForm" value="<?php echo $item['id']; ?>" class="cart-checkbox item-select-check" data-id="<?php echo $item['id']; ?>" data-price="<?php echo $total_item_price; ?>" onchange="updateTotalSummary(); saveCheckboxState()">
+                        <div class="mini-palette-preview" style="background-image: url('<?php echo $bgImage; ?>');">
+                            <?php if (is_array($shades)) foreach ($shades as $index => $color) {
+                                $cls = ($item['config_type'] == 4 ? "slot4-" : "slot9-") . ($index + 1);
+                                echo '<div class="mini-dot ' . $cls . '" style="background-color: ' . ($color ?: 'transparent') . ';"></div>';
+                            } ?>
                         </div>
-                        <div class="rhode-radio-wrapper">
-                            <input type="radio" name="paletteConfig" id="config4" value="4">
-                            <label for="config4">4 Slots Palette</label>
+                        <div class="flex-grow-1 ms-2">
+                            <h5>Custom <?php echo $item['config_type']; ?> Slots Palette</h5>
+                            <form action="update_cart.php" method="POST" class="d-inline">
+                                <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
+                                Qty: <input type="number" name="quantity" value="<?php echo $qty; ?>" min="1" class="border-0 bg-transparent fw-bold" style="width:40px" onchange="this.form.submit()">
+                            </form>
+                            <p class="fw-bold m-0" style="color: #a37081;">RM <?php echo number_format($total_item_price, 2); ?></p>
+                            <a href="delete_cart.php?id=<?php echo $item['id']; ?>" class="text-danger small">Remove</a>
                         </div>
                     </div>
-
-   <h5 class="rhode-label">02. Choose Your Shade</h5>
-<p class="rhode-instruction mb-4">Click to build your dream palette!</p>
-
-<div class="rhode-shades-grid">
-    
-    <div class="color-dot" style="background-color: #FFC6FF;" title="Baby Pink" onclick="applyColor('#FFC6FF')"></div>
-    <div class="color-dot" style="background-color: #FFB3C6;" title="Blush" onclick="applyColor('#FFB3C6')"></div>
-    <div class="color-dot" style="background-color: #D6A2E8;" title="Lilac" onclick="applyColor('#D6A2E8')"></div>
-    <div class="color-dot" style="background-color: #A060A0;" title="Sugar Plum" onclick="applyColor('#A060A0')"></div>
-    <div class="color-dot" style="background-color: #7851A9;" title="Deep Berry" onclick="applyColor('#7851A9')"></div>
-    <div class="color-dot" style="background-color: #8E44AD;" title="Magic Purple" onclick="applyColor('#8E44AD')"></div>
-    <div class="color-dot" style="background-color: #D4A5A5;" title="Dusty Rose" onclick="applyColor('#D4A5A5')"></div>
-    <div class="color-dot" style="background-color: #A37081;" title="Mauve" onclick="applyColor('#A37081')"></div>
-
-    
-    <div class="color-dot" style="background-color: #FDF6E2;" title="Champagne" onclick="applyColor('#FDF6E2')"></div>
-    <div class="color-dot" style="background-color: #F3E99F;" title="Chiffon" onclick="applyColor('#F3E99F')"></div>
-    <div class="color-dot" style="background-color: #E9D8A6;" title="Honey" onclick="applyColor('#E9D8A6')"></div>
-    <div class="color-dot" style="background-color: #FCE22A;" title="Lemon" onclick="applyColor('#FCE22A')"></div>
-
-    
-    <div class="color-dot" style="background-color: #E0A96D;" title="Rose Gold" onclick="applyColor('#E0A96D')"></div>
-    <div class="color-dot" style="background-color: #C68B59;" title="Caramel" onclick="applyColor('#C68B59')"></div>
-    <div class="color-dot" style="background-color: #BC8A5F;" title="Warm Taupe" onclick="applyColor('#BC8A5F')"></div>
-    <div class="color-dot" style="background-color: #B85C38;" title="Copper" onclick="applyColor('#B85C38')"></div>
-    <div class="color-dot" style="background-color: #8B5E3C;" title="Earth Brown" onclick="applyColor('#8B5E3C')"></div>
-    <div class="color-dot" style="background-color: #4A2E2B;" title="Espresso" onclick="applyColor('#4A2E2B')"></div>
-    <div class="color-dot" style="background-color: #5C524E;" title="Muted Espresso" onclick="applyColor('#5C524E')"></div>
-    <div class="color-dot" style="background-color: #3E2723;" title="Dark Cocoa" onclick="applyColor('#3E2723')"></div>
-</div>
-                   
-<div class="row g-2 mt-5">
-    <div class="col-6">
-        <button type="submit" name="add_to_bag" class="btn w-100 text-uppercase py-2" 
-                style="font-size: 0.8rem; letter-spacing: 0.05em; border: 1px solid #bb7688; color: #bb7688; background: transparent;">
-            Add to Bag
-        </button>
-    </div>
-    <div class="col-6">
-        <button type="submit" name="buy_now" class="btn w-100 text-uppercase py-2" 
-                style="font-size: 0.8rem; letter-spacing: 0.05em; border: 1px solid #bb7688; color: #fff; background: #bb7688;">
-            Buy Now
-        </button>
-    </div>
-</div>
                 </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <?php if (!empty($cart_items)): ?>
+        <div class="col-lg-4 p-0 mt-4 ps-lg-4">
+            <div class="rhode-card p-4">
+                <h5>Order Summary</h5>
+                <div class="d-flex justify-content-between mb-2"><span>Selected Items</span><span id="selectedCount">0</span></div>
+                
+                <div id="discountContainer" class="d-flex justify-content-between mb-2 text-danger" style="display: none !important;">
+                    <span>20% OFF</span><span>-RM <span id="discountDisplay">0.00</span></span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2"><span>Shipping</span><span id="shippingDisplay" style="color: #2e7d32;">RM 0.00</span></div>
+                <div class="d-flex justify-content-between pt-3 border-top">
+                    <span>Total Price</span><span class="fw-bold" style="color: #a37081;">RM <span id="totalPriceDisplay">0.00</span></span>
+                </div>
+                <button type="submit" form="checkoutForm" id="btnCheckout" class="btn btn-dark w-100 mt-4" disabled>Proceed to Checkout</button>
             </div>
         </div>
-    </form>
+        <?php endif; ?>
+    </div>
+</div>
 
-    <footer class="rhode-footer py-4 mt-auto">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2026 pixie cosmetics. all rights reserved.</p>
-        </div>
-    </footer>
+<script>
+    function saveCheckboxState() {
+        let checkedIds = [];
+        document.querySelectorAll('.item-select-check:checked').forEach(box => checkedIds.push(box.getAttribute('data-id')));
+        localStorage.setItem('cartCheckedItems', JSON.stringify(checkedIds));
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    function loadCheckboxState() {
+        let checkedIds = JSON.parse(localStorage.getItem('cartCheckedItems') || '[]');
+        checkedIds.forEach(id => {
+            let box = document.querySelector(`.item-select-check[data-id="${id}"]`);
+            if (box) box.checked = true;
+        });
+        updateTotalSummary();
+    }
 
-    <script>
-        let currentActiveSlot = null; 
-        let slotToModify = null; 
-        let activeConfiguration = 9; 
+    function updateTotalSummary() {
+        let subtotal = 0, count = 0;
+        document.querySelectorAll('.item-select-check:checked').forEach(box => {
+            subtotal += parseFloat(box.getAttribute('data-price'));
+            count++;
+        });
         
-        const imagePaletteFrame = document.getElementById('imagePaletteFrame');
-        const interactiveGrid = document.getElementById('interactiveGrid');
-        const deleteActionArea = document.getElementById('deleteActionArea');
-        const btnDeleteColor = document.getElementById('btnDeleteColor');
-        const deleteSlotNumber = document.getElementById('deleteSlotNumber');
-        const shadesHiddenInput = document.getElementById('shadesHiddenInput');
-
-        function buildInteractiveOverlay(slots) {
-            interactiveGrid.innerHTML = "";
-            currentActiveSlot = null;
-            slotToModify = null;
-            activeConfiguration = slots;
-            deleteActionArea.style.display = "none"; 
-            updateHiddenInput(); 
-
-            if (slots === 4) {
-                imagePaletteFrame.style.backgroundImage = "url('photos/fourslots.PNG')";
-                imagePaletteFrame.className = "image-palette-frame configuration-4";
-                interactiveGrid.className = "grid-overlay-4";
-            } else {
-                imagePaletteFrame.style.backgroundImage = "url('photos/nineslots.png')";
-                imagePaletteFrame.className = "image-palette-frame configuration-9";
-                interactiveGrid.className = "grid-overlay-9";
-            }
-
-            for (let i = 1; i <= slots; i++) {
-                const hotspot = document.createElement('div');
-                hotspot.className = "hotspot-slot";
-                hotspot.setAttribute('data-slot', i);
-                hotspot.setAttribute('data-has-color', 'false');
-
-                hotspot.addEventListener('click', function(e) {
-                    e.preventDefault(); 
-
-                    document.querySelectorAll('.hotspot-slot').forEach(h => h.classList.remove('active-hotspot'));
-                    this.classList.add('active-hotspot');
-                    currentActiveSlot = this.getAttribute('data-slot');
-
-                    if (this.getAttribute('data-has-color') === 'true') {
-                        slotToModify = this;
-                        deleteSlotNumber.innerText = currentActiveSlot;
-                        deleteActionArea.style.display = "block"; 
-                    } else {
-                        slotToModify = null;
-                        deleteActionArea.style.display = "none";
-                    }
-                });
-
-                interactiveGrid.appendChild(hotspot);
-            }
+        
+        let isFirstTime = <?php echo $is_first_time ? 'true' : 'false'; ?>;
+        let discount = (isFirstTime && subtotal >= 100) ? (0.20 * subtotal) : 0;
+        let priceAfterDiscount = subtotal - discount;
+        
+        
+        let shipping = (count > 0 && subtotal >= 100) ? 0 : 7.00;
+        
+        
+        let discountContainer = document.getElementById('discountContainer');
+        if (discount > 0) {
+            discountContainer.style.display = 'flex';
+            document.getElementById('discountDisplay').innerText = discount.toFixed(2);
+        } else {
+            discountContainer.style.display = 'none';
         }
+        
+        document.getElementById('shippingDisplay').innerText = (shipping === 0 && count > 0) ? "FREE" : (count > 0 ? "RM " + shipping.toFixed(2) : "RM 0.00");
+        document.getElementById('shippingDisplay').style.color = "#2e7d32";
+        
+        document.getElementById('totalPriceDisplay').innerText = (priceAfterDiscount + (count > 0 ? shipping : 0)).toFixed(2);
+        document.getElementById('selectedCount').innerText = count;
+        document.getElementById('btnCheckout').disabled = (count === 0);
+    }
 
-        function applyColor(hexColor) {
-            let targetHotspot = null;
-
-            if (currentActiveSlot !== null) {
-                let checkSlot = document.querySelector(`.hotspot-slot[data-slot="${currentActiveSlot}"]`);
-                if (checkSlot) {
-                    targetHotspot = checkSlot;
-                }
-            }
-
-            if (!targetHotspot) {
-                targetHotspot = Array.from(document.querySelectorAll('.hotspot-slot')).find(h => h.getAttribute('data-has-color') === 'false');
-            }
-
-            if (targetHotspot) {
-                targetHotspot.style.backgroundColor = hexColor;
-                targetHotspot.style.opacity = "0.85";
-                targetHotspot.style.borderStyle = "solid";
-                targetHotspot.setAttribute('data-has-color', 'true');
-                targetHotspot.setAttribute('data-hex', hexColor);
-
-                targetHotspot.classList.remove('active-hotspot');
-                currentActiveSlot = null;
-                slotToModify = null;
-                deleteActionArea.style.display = "none"; 
-                updateHiddenInput(); 
-            } else {
-                alert('All slots are full!');
-            }
-        }
-
-        btnDeleteColor.addEventListener('click', function() {
-            if (slotToModify) {
-                slotToModify.style.backgroundColor = 'transparent';
-                slotToModify.style.opacity = "1";
-                slotToModify.style.borderStyle = "dashed"; 
-                slotToModify.setAttribute('data-has-color', 'false');
-                slotToModify.removeAttribute('data-hex');
-                slotToModify.classList.remove('active-hotspot');
-                
-                currentActiveSlot = null;
-                slotToModify = null;
-                deleteActionArea.style.display = "none";
-                updateHiddenInput(); 
-            }
-        });
-
-        function updateHiddenInput() {
-            let colorsArray = [];
-            for (let i = 1; i <= activeConfiguration; i++) {
-                let slot = document.querySelector(`.hotspot-slot[data-slot="${i}"]`);
-                if (slot && slot.getAttribute('data-has-color') === 'true') {
-                    colorsArray.push(slot.getAttribute('data-hex'));
-                } else {
-                    colorsArray.push(""); 
-                }
-            }
-            shadesHiddenInput.value = JSON.stringify(colorsArray);
-        }
-
-        document.querySelectorAll('input[name="paletteConfig"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                buildInteractiveOverlay(parseInt(this.value));
-            });
-        });
-
-        buildInteractiveOverlay(9);
-    </script>
+    window.onload = loadCheckboxState;
+</script>
 </body>
 </html>
