@@ -4,16 +4,15 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // ==================================================================
-// BACK-END PROTECTION: BLOCK CUSTOMERS FROM ACCESSING STAFF FILES
+// BACK-END PROTECTION: SEKAT PELANGGAN DARIPADA MASUK FAIL STAF
 // ==================================================================
-// If the user is not logged in OR their session role is not 'admin', block access[cite: 2]
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     header("Location: home.php");
     exit();
 }
 // ==================================================================
 
-include("db_connect.php"); // Connects to the database pixie_db[cite: 1]
+include("db_connect.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,11 +36,20 @@ include("db_connect.php"); // Connects to the database pixie_db[cite: 1]
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             border: none;
         }
+        .color-preview-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 30px;
+            margin-right: 4px;
+            border: 1px solid rgba(0,0,0,0.06);
+            font-family: 'Jost', sans-serif;
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100 text-rhode-dark">
 
-    <!-- Includes the official Pixie header containing dynamic navigation links for staff[cite: 2, 3] -->
     <?php include("header.php"); ?>
 
     <main class="container my-5 flex-grow-1">
@@ -86,7 +94,7 @@ include("db_connect.php"); // Connects to the database pixie_db[cite: 1]
                 </div>
             </div>
 
-            <!-- Customizer/Cart Log Table -->
+            <!-- Customizer/Orders Log Table -->
             <h5 class="mb-3 text-uppercase small fw-bold tracking-wide text-secondary">Recent Customizer Configuration Log</h5>
             <div class="table-responsive">
                 <table class="table table-hover align-middle border-light-subtle">
@@ -101,18 +109,31 @@ include("db_connect.php"); // Connects to the database pixie_db[cite: 1]
                     </thead>
                     <tbody>
                         <?php
-                        // Pulling the list of cart data for staff review[cite: 2]
-                        $query = "SELECT cart.id, cart.user_id, cart.config_type, cart.shades_data FROM cart ORDER BY cart.id DESC LIMIT 5";
+                        // DIKEMAS KINI: Membaca jadual orders (sama seperti admin panel)
+                        $query = "SELECT * FROM orders ORDER BY order_id DESC";
                         $result = mysqli_query($conn, $query);
 
                         if ($result && mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
+                                $current_order_id = $row['order_id'];
+                                
+                                // Mengambil senarai warna bagi order id ini
+                                $color_sql = "SELECT hex_color_code FROM palette_selection WHERE order_id = '$current_order_id' ORDER BY slot_number ASC";
+                                $color_result = mysqli_query($conn, $color_sql);
+                                
                                 echo "<tr>";
-                                echo "<td class='fw-semibold'>#" . $row['id'] . "</td>";
+                                echo "<td class='fw-semibold'>#PX-" . $row['order_id'] . "</td>";
                                 echo "<td>" . htmlspecialchars($row['user_id']) . "</td>";
-                                echo "<td><span class='badge bg-secondary px-2 py-1'>" . $row['config_type'] . " Slots</span></td>";
-                                echo "<td class='text-muted small'><code>" . htmlspecialchars($row['shades_data']) . "</code></td>";
-                                echo "<td class='text-end'><span class='text-warning small'><i class='fas fa-clock me-1'></i> In Bag</span></td>";
+                                echo "<td>" . $row['palette_type'] . " Custom Slots</td>";
+                                echo "<td>";
+                                echo "<div class='d-flex flex-wrap gap-1 align-items-center'>";
+                                while($color_row = mysqli_fetch_assoc($color_result)) {
+                                    $hex = $color_row['hex_color_code'];
+                                    echo "<span class='color-preview-badge' style='background-color: $hex; color: #4A2E2B;'>$hex</span>";
+                                }
+                                echo "</div>";
+                                echo "</td>";
+                                echo "<td class='text-end'><span class='badge bg-success small'>Submitted</span></td>";
                                 echo "</tr>";
                             }
                         } else {
