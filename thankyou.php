@@ -1,17 +1,16 @@
 <?php
 session_start();
 
-// SECURITY CHECK: Sila pastikan user dah login
+// SECURITY CHECK
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
 
-// SAMBUNGAN DATABASE
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "pixie_db"; 
+$dbname = "pixie_new_db"; 
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selected_items'])) {
     $selected_items = $_POST['selected_items'];
     
     foreach ($selected_items as $item_id) {
-        // Padam berdasarkan ID barang dan username untuk keselamatan
         $stmt = $conn->prepare("DELETE FROM cart WHERE id = ? AND user_id = ?");
         $stmt->bind_param("is", $item_id, $user);
         $stmt->execute();
@@ -61,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selected_items'])) {
             <div class="col-md-6 p-0">
                 <div class="rhode-card p-5 text-center shadow-sm">
                     <span class="fs-1">✨</span>
-                    <h2 class="my-3" style="font-family: 'Fraunces', serif; font-weight: 300;">Thank You for Your Order!</h2>
+                    <h2 class="my-3" style="font-family: 'Fraunces', serif; font-weight: 300;">Thank You for Your Order ˚˖𓍢ִ໋❀</h2>
                     <p class="text-muted mb-5" style="font-family: 'Jost', sans-serif; font-size: 0.95rem;">Your custom palette configuration has been successfully submitted and is ready for production.</p>
                     
                     <!-- BUTANG KEMBALI KE HOME -->
