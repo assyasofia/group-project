@@ -1,40 +1,60 @@
 <?php
 ob_start(); // Mengatasi isu sekatan header redirect dalam PHP
 session_start();
-
-// SECURITY CHECK: If the user is NOT logged in, kick them back to login.php
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// SAMBUNGAN DATABASE (Sila pastikan nama db sepadan dengan phpMyAdmin awak)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pixie_db"; // <-- Sila tukar nama database di sini jika berbeza
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Semak sambungan DB
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+include("db_connect.php");
 
 // LOGIK PENGURUSAN BORANG (Bila user tekan butang "Add to Bag" ATAU "Buy Now")
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isset($_POST['buy_now']))) {
-    
+
+    // BACKEND PROTECTION: Jika terlepas pencerobohan tanpa session
+    if (!isset($_SESSION['user'])) {
+        header("Location: login.php");
+        exit();
+    }
+
     $user = $_SESSION['user']; 
     $config = isset($_POST['paletteConfig']) ? $_POST['paletteConfig'] : '9'; 
     $shades = isset($_POST['shades_hidden']) ? $_POST['shades_hidden'] : '[]';
 
     // Masukkan data konfigurasi & warna ke dalam database
     $stmt = $conn->prepare("INSERT INTO cart (user_id, config_type, shades_data) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $user, $config, $shades);
+    $stmt->bind_param("sss", $user, $config, $shades);
     $stmt->execute();
     $stmt->close();
 
-    // TIKTOK LOGIC: Tentukan arah halaman mengikut butang pilihan user
+    $shades_array = json_decode($shades, true);
+
+    if (is_array($shades_array)) {
+        // Try inserting into orders table using user_id or username columns dynamically.
+        // Based on the error, let's verify if your orders table uses 'user_id' instead of 'username'
+        $stmt_order = $conn->prepare("INSERT INTO orders (user_id, palette_type) VALUES (?, ?)");
+        
+        // If your table relies on 'username', swap 'user_id' back, but based on the database error 
+        // 'username' column does not exist in your field list! So it is 'user_id'.
+        if(!$stmt_order) {
+            // Fallback check just in case it's named 'customer_name' or similar
+            $stmt_order = $conn->prepare("INSERT INTO orders (username, palette_type) VALUES (?, ?)");
+        }
+        
+        $stmt_order->bind_param("ss", $user, $config);
+        $stmt_order->execute();
+        
+        $new_order_id = $conn->insert_id;
+        $stmt_order->close();
+
+        // Loop through each color slot and save it inside 'palette_selection'
+        $stmt_selection = $conn->prepare("INSERT INTO palette_selection (order_id, slot_number, hex_color_code) VALUES (?, ?, ?)");
+        
+        foreach ($shades_array as $index => $hex_code) {
+            $slot_number = $index + 1;
+            if (!empty($hex_code)) {
+                $stmt_selection->bind_param("iis", $new_order_id, $slot_number, $hex_code);
+                $stmt_selection->execute();
+            }
+        }
+        $stmt_selection->close();
+    }
+
     if (isset($_POST['buy_now'])) {
         // Jika tekan Buy Now, paksa redirect menggunakan JavaScript supaya 100% berjaya bertukar halaman
         echo "<script>window.location.href='cart.php';</script>";
@@ -63,6 +83,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
             box-shadow: 0 0 10px rgba(163, 112, 129, 0.6);
         }
     </style>
+
+    <script>
+        // DIBETULKAN: Menggunakan $_SESSION['user'] sepadan dengan sistem login anda
+        const isLoggedIn = <?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>;
+        
+        function handleAddToCart(event) {
+            if (!isLoggedIn) {
+                // 1. Sekat form daripada menghantar data ke PHP backend
+                event.preventDefault();
+                
+                // 2. Paparkan amaran alert
+                alert("Please log in first to save your custom palette to your bag!");
+                
+                // 3. Alihkan pelanggan terus ke halaman login.php
+                window.location.href = "login.php";
+                return false;
+            }
+            return true; 
+        }
+    </script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-rhode text-rhode-dark">
 
@@ -99,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
                         </div>
                     </div>
 
-   <h5 class="rhode-label">02. Choose Your Shade</h5>
+<h5 class="rhode-label">02. Choose Your Shade</h5>
 <p class="rhode-instruction mb-4">Click to build your dream palette!</p>
 
 <div class="rhode-shades-grid">
