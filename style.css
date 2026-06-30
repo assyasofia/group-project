@@ -369,24 +369,16 @@ body{
 
 
 /* ---------- Announcement ---------- */
-
-.top-banner{
-
-    background:#fcf6f4;
-
-    border-bottom:1px solid rgba(0,0,0,.05);
-
-    
-    font-size:.7rem; 
-
-    letter-spacing:.5px;
-
-    padding:10px 0;
-
+.top-banner {
+    background: #fad2da !important; /* Warna pink lembut baharu dari image_4907b8.png */
+    color: #3d262a !important;      /* Kekalkan tulisan coklat gelap plum supaya mudah dibaca */
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    font-size: .7rem; 
+    letter-spacing: .5px;
+    padding: 10px 0;
 }
 
 /* ---------- Hero ---------- */
-/
 .hero-circle {
     display: none !important; 
 }
@@ -775,3 +767,4 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none; 
     margin: 0; 
 }
+
