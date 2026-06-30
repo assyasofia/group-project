@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
         }
 		body {
         background-color: #fbf5f6 !important; 
-    }
+        }
     </style>
 
 	<script>
@@ -55,13 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['add_to_bag']) || isse
         
         function handleAddToCart(event) {
             if (!isLoggedIn) {
-                // 1. Sekat form daripada menghantar data ke PHP backend
                 event.preventDefault();
                 
-                // 2. Paparkan amaran alert
                 alert("Please log in first to save your custom palette to your bag!");
                 
-                // 3. Alihkan pelanggan terus ke halaman login.php
                 window.location.href = "login.php";
                 return false;
             }
