@@ -1,33 +1,34 @@
 <?php
+session_start();
 include("db_connect.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
-    $pass1 = $_POST['pass1'];
-    $pass2 = $_POST['pass2'];
+    $password = $_POST['password'];
 
-    // 1. Semak jika emel sudah wujud dalam database
+    // Check if the email already exists in the database
     $check_email = "SELECT email FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $check_email);
 
     if (mysqli_num_rows($result) > 0) {
-        // Jika emel dijumpai, tunjukkan mesej ini
+        // If email exists, show an alert and redirect back to the registration page 
         echo "<script>alert('This email has existed. Please use another email.'); window.history.back();</script>";
         exit();
     }
 
-    // 2. Jika emel tiada, teruskan pendaftaran
-    if ($pass1 !== $pass2) {
-        echo "<script>alert('Password tidak sama!'); window.history.back();</script>";
-        exit();
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    if (strpos($email, '@pixie.com') !== false) {
+        $assigned_role = 'admin'; // Disimpan sebagai staff/admin
+    } else {
+        $assigned_role = 'user';  // Disimpan sebagai pelanggan biasa
     }
 
-    $hashed_password = password_hash($pass1, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO users (email, fullname, password, role) VALUES ('$email', '$fullname', '$hashed_password', 'user')";
+    $sql = "INSERT INTO users (email, fullname, password, role) VALUES ('$email', '$fullname', '$hashed_password', '$assigned_role')";
     
     if (mysqli_query($conn, $sql)) {
-        echo "<script>alert('Pendaftaran Berjaya!'); window.location='login.php';</script>";
+        echo "<script>alert('Registration successful!'); window.location='login.php';</script>";
     } else {
         echo "<script>alert('Error: " . mysqli_error($conn) . "'); window.history.back();</script>";
     }
